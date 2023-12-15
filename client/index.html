@@ -22,7 +22,7 @@
       .container {
         max-width: 400px;
         padding: 20px;
-        background-color: #fff;
+        background-color: #ffffff;
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
@@ -72,10 +72,10 @@
 
     <div class="container">
       <h2>Login</h2>
-      <form>
-        <input type="text" placeholder="Email" />
-        <input type="password" placeholder="Password" />
-        <button>Login</button>
+      <form id="loginForm">
+        <input id="loginEmail" type="text" placeholder="Email" />
+        <input id="loginPassword" type="password" placeholder="Password" />
+        <button id="loginBtn">Login</button>
       </form>
     </div>
   </body>
@@ -86,14 +86,14 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       Toastify({
-        text: "Refresing",
+        text: "Refreshing",
         duration: 2000,
         destination: "https://github.com/apvarun/toastify-js",
         newWindow: true,
         close: true,
         gravity: "top", // `top` or `bottom`
-        position: "right", // `left`, `center` or `right`
-        stopOnFocus: true, // Prevents dismissing of toast on hover
+        position: "right", // `left`, `center`, or `right`
+        stopOnFocus: true, // Prevent dismissing the toast on hover
         style: {
           background: "linear-gradient(to right, #00b09b, #96c93d)",
         },
@@ -123,7 +123,6 @@
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(55, data);
           // Handle the response from the server
           if (data.message) {
             Toastify({
@@ -158,5 +157,66 @@
           }).showToast();
         });
     });
-  </script>
+ 
+ 
+    //login
+
+    const loginBtn = document.getElementById("loginBtn");
+  loginBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const loginEmail = document.getElementById("loginEmail").value;
+    const loginPassword = document.getElementById("loginPassword").value;
+
+    // Create a user object to send to the server for login
+    const loginData = {
+      email: loginEmail,
+      password: loginPassword,
+    };
+
+    // Send a POST request to the server for login
+    fetch("http://localhost:4500/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(loginData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(825,data)
+        // Handle the response from the server
+        if (data.message) {
+          Toastify({
+            text: data.message,
+            className: "info",
+            duration: 10000,
+            style: {
+              background: "linear-gradient(to right, #00b09b, #96c93d)",
+            },
+          }).showToast();
+          // Redirect to another page or perform other actions here
+        } else {
+          Toastify({
+            text: `Invalid Credential`,
+            className: "info",
+            duration: 10000,
+            style: {
+              background: "linear-gradient(to right, #00b09b, #96c93d)",
+            },
+          }).showToast();
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        Toastify({
+          text: "Login failed: An error occurred",
+          className: "info",
+          duration: 10000,
+          style: {
+            background: "linear-gradient(to right, #00b09b, #96c93d)",
+          },
+        }).showToast();
+      });
+  });
+ </script>
 </html>

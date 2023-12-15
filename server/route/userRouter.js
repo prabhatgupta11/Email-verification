@@ -7,6 +7,7 @@ userRoute.use(express.json());
 
 // Signup route
 userRoute.post("/signup", userController.signupUser);
+userRoute.post("/login", userController.loginUser);
 userRoute.get("/getdata", userController.getdata);
 
 userRoute.get('/verify', async (req, res) => {

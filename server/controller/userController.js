@@ -46,7 +46,6 @@ const signupUser = async (req, res) => {
     // Send an email with a verification link
     const verificationLink = `http://localhost:4500/api/verify?token=${verificationToken}`;
 
-
     const mailOptions = {
       from: "guptajim3636@gmail.com",
       to: email,
@@ -57,11 +56,49 @@ const signupUser = async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log("Verification email sent successfully.");
 
+    // Send a welcome email
+    const welcomeMessage = `Welcome to our platform, ${email}! Thank you for signing up. We are excited to have you on board.`;
+    const welcomeMailOptions = {
+      from: "guptajim3636@gmail.com",
+      to: email,
+      subject: "Welcome to our platform!",
+      text: welcomeMessage,
+    };
+
+    await transporter.sendMail(welcomeMailOptions);
+    console.log("Welcome email sent successfully.");
+
     res.status(201).json({ message: "Registration successful. Check your email for verification instructions.", user });
   } catch (err) {
     res.status(401).json({ message: err.message });
   }
 };
+
+
+
+//login route
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+       const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.json("Email not verified");
+    }
+
+    // Compare the provided password with the hashed password in the database
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.json("Please provide the correct password");
+    }
+
+    res.status(201).json({ message: "Login successful.", user });
+  } catch (err) {
+    res.status(401).json({ message: err.message });
+  }
+};
+
 
 
 const getdata = async (req, res) => {
@@ -76,5 +113,6 @@ const getdata = async (req, res) => {
 
 module.exports = {
   signupUser,
-  getdata
+  getdata,
+  loginUser
 };
